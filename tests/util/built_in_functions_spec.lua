@@ -200,4 +200,51 @@ describe("BuiltInFunctions tests", function ()
         assert.is.False(BuiltInFunctions.IPMatch("192.168.2.124", "192.168.2.123"))
         assert.is.False(BuiltInFunctions.IPMatch("192.166.2.123", "192.168.2.123"))
     end)
+
+    it("keyMatchFunc tests", function ()
+        assert.has_no.errors(BuiltInFunctions.keyMatchFunc("/foo", "/"))
+        assert.has.errors(BuiltInFunctions.keyMatchFunc("/foo", "/foo","expected"))
+    end)
+
+    it("keyGetFunc tests", function ()
+        assert.has_no.errors(BuiltInFunctions.keyGetFunc("/foo", "/foo"))
+        assert.has.errors(BuiltInFunctions.keyGetFunc("/foo", "/foo*","expected"))
+    end)
+
+    it("keyMatch2Func tests", function ()
+        assert.has_no.errors(BuiltInFunctions.keyMatch2Func("/foo", "/"))
+        assert.has.errors(BuiltInFunctions.keyMatch2Func("/foo", "/foo","expected"))
+    end)
+
+    it("keyGet2Func tests", function ()
+        assert.has_no.errors(BuiltInFunctions.keyGet2Func("/foo", "/foo", "id"))
+        assert.has.errors(BuiltInFunctions.keyGet2Func("/foo", "/foo*", "id","expected"))
+    end)
+
+    it("keyMatch3Func tests", function ()
+        assert.has_no.errors(BuiltInFunctions.keyMatch3Func("/foo", "/foo"))
+        assert.has.errors(BuiltInFunctions.keyMatch3Func("/foo", "/foo*","expected"))
+    end)
+
+    it("keyMatch4Func tests", function ()
+        assert.has_no.errors(BuiltInFunctions.keyMatch4Func("/parent/123/child/123", "/parent/{id}/child/{id}"))
+        assert.has.errors(BuiltInFunctions.keyMatch4Func("/parent/123/child/456", "/parent/{id}/child/{id}","expected"))
+    end)
+
+    it("regexMatchFunc tests", function ()
+        assert.has_no.errors(BuiltInFunctions.regexMatchFunc("/topic/create", "/topic/create"))
+        assert.has.errors(BuiltInFunctions.regexMatchFunc("/topic/create/123", "/topic/create","expected"))
+    end)
+
+    it("globMatchFunc tests", function ()
+        assert.has_no.errors(BuiltInFunctions.globMatchFunc("/foo", "/foo"))
+        assert.has.errors(BuiltInFunctions.globMatchFunc("/foo", "/foo*","expected"))
+
+    end)
+
+    it("IPMatchFunc tests", function ()
+        assert.has_no.errors(BuiltInFunctions.IPMatchFunc("192.168.2.123", "192.168.2.0/24"))
+        assert.has.errors(BuiltInFunctions.IPMatchFunc("192.168.2.123", "192.168.2.0/25","expected"))
+    end)
+
 end)
