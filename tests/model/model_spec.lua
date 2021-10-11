@@ -195,6 +195,37 @@ describe("model tests", function()
         for _, newRule in pairs(newRules) do
             assert.is.True(m:hasPolicy("p", "p", newRule))
         end
+
+        local oldRules1 = {
+            {'admin', 'domain1', 'data4', 'read'},
+            {'admin', 'domain1', 'data5', 'read'},
+        }
+        local newRules1 = {
+            {'admin', 'domain1', 'data1', 'read'},
+            {'admin', 'domain1', 'data2', 'read'}
+        }
+
+        local resRules1 = {
+            {'admin', 'domain1', 'data1', 'read'},
+            {'admin', 'domain1', 'data2', 'read'},
+            {'admin', 'domain1', 'data6', 'read'}
+        }
+
+        for _, oldRule in pairs(oldRules1) do
+            assert.is.True(m:hasPolicy("p", "p", oldRule))
+        end
+
+        m:updatePolicies("p", "p", oldRules1, newRules1)
+
+        for _, oldRule in pairs(oldRules1) do
+            assert.is.False(m:hasPolicy("p", "p", oldRule))
+        end
+
+        for _, newRule in pairs(newRules1) do
+            assert.is.True(m:hasPolicy("p", "p", newRule))
+        end
+
+        assert.is.same(resRules1,m:getPolicy("p", "p"))
     end)
 
     it("test clearPolicy", function ()
@@ -224,6 +255,33 @@ describe("model tests", function()
 
         res = m:removeFilteredPolicy("p", "p", 1, {"domain1", "data1"})
         assert.is.False(res)
+    end)
+
+    it("test updateFilteredPolicies", function ()
+        local m = Model:new()
+        m:loadModel(rbac_with_domains_path)
+
+        local rules = {
+            {'admin', 'domain1', 'data1', 'read'},
+            {'admin1', 'domain1', 'data1', 'read'},
+            {'admin', 'domain2', 'data3', 'read'}
+        }
+        m:addPolicies("p", "p", rules)
+
+        local newRules = {
+            {'admin', 'domain1', 'data1', 'write'},
+            {'admin1', 'domain1', 'data1', 'write'},
+        }
+
+        m:updateFilteredPolicies("p", "p", 1, {"domain1", "data1"},newRules)
+        local resRules = {
+            {'admin', 'domain1', 'data1', 'write'},
+            {'admin1', 'domain1', 'data1', 'write'},
+            {'admin', 'domain2', 'data3', 'read'}
+        }
+
+        assert.are.same(resRules, m:getPolicy("p","p"))
+
     end)
 
     it("test getFilteredPolicy", function ()
